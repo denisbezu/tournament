@@ -3,11 +3,19 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+        <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('vendor/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/css/theme-styles.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
         {% block stylesheets %}{% endblock %}
     </head>
-    <body>
+    <body id="page-top">
+        <div id="app"></div>
         {% block body %}{% endblock %}
+        <script src="{{ asset('vendor/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('vendor/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('build/app.js') }}"></script>
         {% block javascripts %}{% endblock %}
     </body>
