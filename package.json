@@ -1,0 +1,19 @@
+{
+  "name": "tournament",
+  "version": "1.0.0",
+  "dependencies": {
+    "webpack-notifier": "^1.7.0"
+  },
+  "scripts": {
+    "dev-server": "encore dev-server --hot",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "github:symfony/webpack-encore",
+    "vue": "^2.5.21",
+    "vue-loader": "^15.4.2",
+    "vue-template-compiler": "^2.5.21"
+  }
+}
