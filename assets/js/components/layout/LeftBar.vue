@@ -15,16 +15,13 @@
                     <router-link class="nav-link" :to="'/tournaments/list'">Tournaments</router-link>
                 </li>
                 <li class="nav-item">
+                    <router-link class="nav-link" :to="'/schedule'">Schedule</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link class="nav-link" :to="'/players/list'">Players</router-link>
+                </li>
+                <li class="nav-item">
                     <router-link class="nav-link" :to="'/info'">Info</router-link>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#skills">Skills</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#interests">Interests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="#awards">Awards</a>
                 </li>
             </ul>
         </div>

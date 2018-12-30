@@ -1,38 +1,41 @@
 <template>
     <div>
-        <h2>All tournaments</h2>
+        <h2>All players</h2>
         <div class="form-inline justify-content-between">
-            <router-link :to="'/tournaments/add'" class="btn btn-primary btn-lg" role="button" aria-pressed="true">Add
-                tournament
+            <router-link :to="'/players/add'" class="btn btn-primary btn-lg" role="button" aria-pressed="true">Add
+                player
             </router-link>
-            <input type="text" v-model="search" class="form-control mt-2" placeholder="Search tournament.."/>
+            <input type="text" v-model="search" class="form-control mt-2" placeholder="Search player.."/>
         </div>
         <div class="row mt-3 px-3">
             <table class="table table-hover">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th class="d-none d-md-table-cell" scope="col">Start date</th>
-                    <th class="d-none d-md-table-cell" scope="col">End date</th>
+                    <th class="d-none d-md-table-cell" scope="col">FirstName</th>
+                    <th scope="col">Lastname</th>
+                    <th class="d-none d-md-table-cell" scope="col">Surname</th>
+                    <th class="d-none d-md-table-cell" scope="col">Birthday</th>
+                    <th class="d-none d-md-table-cell" scope="col">Phone</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr
-                        v-for="(tournament, index) in tournaments"
-                        :key="tournament.id"
+                        v-for="(player, index) in players"
+                        :key="player.id"
                 >
                     <th scope="row">{{ index + 1 }}</th>
-                    <td>{{ tournament.name }}</td>
-                    <td class="d-none d-md-table-cell">{{ tournament.date_start }}</td>
-                    <td class="d-none d-md-table-cell">{{ tournament.date_end }}</td>
+                    <td class="d-none d-md-table-cell">{{ player.firstname }}</td>
+                    <td>{{ player.lastname }}</td>
+                    <td class="d-none d-md-table-cell">{{ player.surname }}</td>
+                    <td class="d-none d-md-table-cell">{{ player.birthday }}</td>
+                    <td class="d-none d-md-table-cell">{{ player.phone }}</td>
                     <td class="text-right">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-secondary">Courts</button>
-                            <router-link type="button" class="btn btn-warning" :to="'/tournaments/edit/' + tournament.id">Edit</router-link>
+                            <router-link type="button" class="btn btn-warning" :to="'/players/edit/' + player.id">Edit</router-link>
                             <button
-                                    @click="setObjectToDelete(tournament.id)"
+                                    @click="setObjectToDelete(player.id)"
                                     type="button"
                                     class="btn btn-danger"
                                     data-toggle="modal"
@@ -60,10 +63,10 @@
             }
         },
         computed: {
-            tournaments() {
-                const ts = this.$store.getters.tournaments;
-                return ts.filter(t => {
-                    return t.name.toLowerCase().includes(this.search.toLowerCase());
+            players() {
+                const pl = this.$store.getters.players;
+                return pl.filter(t => {
+                    return t.lastname.toLowerCase().includes(this.search.toLowerCase());
                 }).reverse();
             },
             loading() {
@@ -76,13 +79,12 @@
             }
         },
         created() {
-            this.$store.dispatch('fetchTournaments');
+            this.$store.dispatch('fetchPlayers');
 
             eventEmitter.$on('confirmModal', () => {
-                console.log(this.objectId);
-                this.$store.dispatch('removeTournament', this.objectId)
+                this.$store.dispatch('removePlayer', this.objectId)
                     .then(() => {
-                        this.$router.push('/tournaments/list')
+                        this.$router.push('/players/list')
                     })
                     .catch(() => {});
             });
