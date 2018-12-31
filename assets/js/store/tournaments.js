@@ -79,7 +79,6 @@ export default {
                     ...updateTournament
                 })
             } catch (error) {
-                console.log(error);
                 commit('setError', error.message);
                 commit('setLoading', false);
                 throw error;
@@ -123,7 +122,6 @@ export default {
                     )
                 });
 
-                console.log(resultTournaments);
                 commit('loadTournaments', resultTournaments);
                 commit('setLoading', false)
             } catch (error) {

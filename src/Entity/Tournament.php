@@ -38,6 +38,11 @@ class Tournament
      */
     private $courts;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $link_google;
+
     public function __construct()
     {
         $this->courts = new ArrayCollection();
@@ -111,6 +116,18 @@ class Tournament
                 $court->setTournament(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLinkGoogle(): ?string
+    {
+        return $this->link_google;
+    }
+
+    public function setLinkGoogle(?string $link_google): self
+    {
+        $this->link_google = $link_google;
 
         return $this;
     }

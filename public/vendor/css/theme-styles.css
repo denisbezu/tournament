@@ -190,3 +190,10 @@ a {
 a:hover, a:focus, a:active {
   color: #824027;
 }
+
+.bg-light-rose {
+  background-color: #ffdbdf;
+}
+.btn-up, .btn-down {
+  cursor: pointer;
+}

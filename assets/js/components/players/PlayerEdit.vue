@@ -98,7 +98,6 @@
                 return this.$v.$invalid;
             },
             player() {
-                console.log(this.$store.getters.playerById(this.id));
                 return this.$store.getters.playerById(this.id);
             }
         },

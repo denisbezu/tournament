@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -26,6 +28,16 @@ class Court
      * @ORM\Column(type="string", length=255)
      */
     private $name;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\TMatch", mappedBy="court")
+     */
+    private $tMatches;
+
+    public function __construct()
+    {
+        $this->tMatches = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -52,6 +64,37 @@ class Court
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TMatch[]
+     */
+    public function getTMatches(): Collection
+    {
+        return $this->tMatches;
+    }
+
+    public function addTMatch(TMatch $tMatch): self
+    {
+        if (!$this->tMatches->contains($tMatch)) {
+            $this->tMatches[] = $tMatch;
+            $tMatch->setCourt($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTMatch(TMatch $tMatch): self
+    {
+        if ($this->tMatches->contains($tMatch)) {
+            $this->tMatches->removeElement($tMatch);
+            // set the owning side to null (unless already changed)
+            if ($tMatch->getCourt() === $this) {
+                $tMatch->setCourt(null);
+            }
+        }
 
         return $this;
     }

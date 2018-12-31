@@ -86,7 +86,6 @@ export default {
                     ...updatePlayer
                 })
             } catch (error) {
-                console.log(error);
                 commit('setError', error.message);
                 commit('setLoading', false);
                 throw error;

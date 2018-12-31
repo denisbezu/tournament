@@ -29,7 +29,7 @@
                     <td class="d-none d-md-table-cell">{{ tournament.date_end }}</td>
                     <td class="text-right">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-secondary">Courts</button>
+                            <button type="button" class="btn btn-secondary">Draws</button>
                             <router-link type="button" class="btn btn-warning" :to="'/tournaments/edit/' + tournament.id">Edit</router-link>
                             <button
                                     @click="setObjectToDelete(tournament.id)"
@@ -79,7 +79,6 @@
             this.$store.dispatch('fetchTournaments');
 
             eventEmitter.$on('confirmModal', () => {
-                console.log(this.objectId);
                 this.$store.dispatch('removeTournament', this.objectId)
                     .then(() => {
                         this.$router.push('/tournaments/list')

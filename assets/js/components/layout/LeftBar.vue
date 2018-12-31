@@ -1,5 +1,8 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
+        <button class="navbar-toggler" type="button" @click="goBack">
+            <i class="fas fa-long-arrow-alt-left fa-lg"></i>
+        </button>
         <router-link class="navbar-brand" :to="'/'">
             <span class="d-block d-lg-none">Bezuhlyi Denys</span>
             <span class="d-none d-lg-block">
@@ -30,7 +33,11 @@
 
 <script>
     export default {
-        name: "LeftBar"
+        methods: {
+            goBack() {
+                this.$router.go(-1);
+            }
+        }
     }
 </script>
 

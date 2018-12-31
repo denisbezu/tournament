@@ -9,6 +9,8 @@ import PlayersList from '../components/players/PlayersList';
 import PlayersAdd from '../components/players/PlayerAdd';
 import PlayersEdit from '../components/players/PlayerEdit';
 import TournamentsEdit from "../components/tournaments/TournamentsEdit";
+import MatchAdd from "../components/schedule/MatchAdd";
+import MatchEdit from "../components/schedule/MatchEdit";
 
 Vue.use(Router);
 
@@ -59,6 +61,18 @@ export default new Router({
             path: '/players/edit/:id',
             name: 'players-edit',
             component: PlayersEdit,
+            props: true
+        },
+        {
+            path: '/match/add/:tournament/:court',
+            name: 'match-add',
+            component: MatchAdd,
+            props: true
+        },
+        {
+            path: '/match/edit/:id',
+            name: 'match-edit',
+            component: MatchEdit,
             props: true
         },
         // {

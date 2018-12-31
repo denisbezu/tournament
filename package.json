@@ -2,6 +2,7 @@
   "name": "tournament",
   "version": "1.0.0",
   "dependencies": {
+    "popper": "^1.0.1",
     "webpack-notifier": "^1.7.0"
   },
   "scripts": {
