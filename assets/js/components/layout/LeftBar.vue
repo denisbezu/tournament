@@ -30,6 +30,12 @@
                 <li class="nav-item" @click="hideMobileMenu">
                     <router-link class="nav-link" :to="'/info'">Info</router-link>
                 </li>
+                <li class="nav-item"
+                    @click="hideMobileMenu"
+                    v-if="$root.auth"
+                >
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
             </ul>
         </div>
     </nav>

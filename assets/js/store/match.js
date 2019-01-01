@@ -102,10 +102,10 @@ export default {
             commit('clearError');
             commit('setLoading', true);
             try {
-                await axios.post('/courts/delete', {id: payload});
+                await axios.post('/matches/delete', {id: payload});
 
                 commit('setLoading', false);
-                commit('removeCourt', {
+                commit('removeMatch', {
                     id: payload
                 })
             } catch (error) {
@@ -146,6 +146,74 @@ export default {
                 throw error;
             }
         },
+        async fetchMatchesByTournament({commit, getters}, payload) {
+            commit('clearError');
+            commit('setLoading', true);
+            try {
+                const resultMatches = [];
+                const matchesResponse = await axios.post('/matches/get-list/tournament', {tournament: payload.tournament});
+                const matches = matchesResponse.data;
+                Object.keys(matches).forEach(key => {
+                    const match = matches[key];
+
+                    resultMatches.push(
+                        new Match(
+                            match.tournament,
+                            match.court,
+                            match.player1,
+                            match.player2,
+                            match.score,
+                            match.winner,
+                            match.position,
+                            match.id
+                        )
+                    )
+                });
+
+                commit('loadMatches', resultMatches);
+                commit('setLoading', false)
+            } catch (error) {
+                commit('setError', error.message);
+                commit('setLoading', false);
+                throw error;
+            }
+        },
+        async updatePosition({commit, getters}, payload) {
+            commit('clearError');
+            commit('setLoading', true);
+            try {
+                const resultMatches = [];
+                const matchesResponse = await axios.post('/matches/position-update', {
+                    id: payload.id,
+                    type: payload.type,
+                    position: payload.position
+                });
+                const matches = matchesResponse.data;
+                Object.keys(matches).forEach(key => {
+                    const match = matches[key];
+
+                    resultMatches.push(
+                        new Match(
+                            match.tournament,
+                            match.court,
+                            match.player1,
+                            match.player2,
+                            match.score,
+                            match.winner,
+                            match.position,
+                            match.id
+                        )
+                    )
+                });
+
+                commit('loadMatches', resultMatches);
+                commit('setLoading', false)
+            } catch (error) {
+                commit('setError', error.message);
+                commit('setLoading', false);
+                throw error;
+            }
+        }
     },
     getters: {
         matches(state) {

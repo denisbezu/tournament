@@ -1,8 +1,10 @@
 <template>
-    <div>
+    <div class="px-3">
         <h2>All tournaments</h2>
         <div class="form-inline justify-content-between">
-            <router-link :to="'/tournaments/add'" class="btn btn-primary btn-lg" role="button" aria-pressed="true">Add
+            <router-link
+                    v-if="$root.auth"
+                    :to="'/tournaments/add'" class="btn btn-primary btn-lg" role="button" aria-pressed="true">Add
                 tournament
             </router-link>
             <input type="text" v-model="search" class="form-control mt-2" placeholder="Search tournament.."/>
@@ -15,7 +17,7 @@
                     <th scope="col">Name</th>
                     <th class="d-none d-md-table-cell" scope="col">Start date</th>
                     <th class="d-none d-md-table-cell" scope="col">End date</th>
-                    <th></th>
+                    <th v-if="$root.auth"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,17 +29,21 @@
                     <td>{{ tournament.name }}</td>
                     <td class="d-none d-md-table-cell">{{ tournament.date_start }}</td>
                     <td class="d-none d-md-table-cell">{{ tournament.date_end }}</td>
-                    <td class="text-right">
+                    <td
+                            v-if="$root.auth"
+                            class="text-right">
                         <div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-secondary">Draws</button>
-                            <router-link type="button" class="btn btn-warning" :to="'/tournaments/edit/' + tournament.id">Edit</router-link>
+                            <router-link type="button" class="btn btn-warning"
+                                         :to="'/tournaments/edit/' + tournament.id">Edit
+                            </router-link>
                             <button
                                     @click="setObjectToDelete(tournament.id)"
                                     type="button"
                                     class="btn btn-danger"
                                     data-toggle="modal"
                                     data-target="#confirmModal"
-                            >Delete</button>
+                            >Delete
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -83,7 +89,8 @@
                     .then(() => {
                         this.$router.push('/tournaments/list')
                     })
-                    .catch(() => {});
+                    .catch(() => {
+                    });
             });
         }
     }

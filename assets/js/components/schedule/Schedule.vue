@@ -2,7 +2,9 @@
     <div>
         <h2 class="pl-3">Schedule</h2>
         <div class="form-inline justify-content-between px-3">
-            <div class="form-inline">
+            <div
+                    v-if="$root.auth"
+                    class="form-inline">
                 <input type="text" v-model="courtNew" class="form-control mr-sm-2 mt-2" placeholder="Court name">
                 <button
                         class="btn btn-success mt-2"
@@ -40,7 +42,9 @@
             </select>
         </div>
 
-        <div class="row m-3">
+        <div
+                class="row m-3"
+                v-if="tournament !== 'empty' && courtViewType !== 'all'">
             <ul class="nav nav-tabs">
                 <li
                         class="nav-item"
@@ -60,6 +64,7 @@
             <app-match-list
                     :tournament="tournament"
                     :court="selectedCourt"
+                    :courtViewType="courtViewType"
             ></app-match-list>
         </div>
     </div>
@@ -90,7 +95,10 @@
                 }
 
                 return this.$store.getters.courts
-            }
+            },
+            loading() {
+                return this.$store.getters.loading
+            },
         },
         methods: {
             addCourt() {
@@ -101,6 +109,9 @@
             },
             selectTournament(t) {
                 this.$store.dispatch('fetchCourts', {id: t});
+                if (this.courtViewType === CourtViewType.all) {
+                    this.$store.dispatch('fetchMatchesByTournament', {tournament: t});
+                }
             },
             selectCourt(courtId, afterTournament = false) {
                 this.selectedCourt = courtId;

@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <div
+        v-if="$root.auth"
+    >
         <h2 class="pl-3">Edit tournament</h2>
         <div class="row mt-3">
             <form class="col-12">

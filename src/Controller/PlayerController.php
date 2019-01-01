@@ -90,8 +90,11 @@ class PlayerController extends AbstractController
         $player->setLastname($content->lastname);
         $player->setSurname($content->surname);
         $player->setPhone($content->phone);
-        $player->setBirthday(new \DateTime('@'. strtotime($content->birthday)));
-
+        if (!empty($content->birthday)) {
+            $player->setBirthday(new \DateTime('@'. strtotime($content->birthday)));
+        } else {
+            $player->setBirthday(null);
+        }
         $entityManager->persist($player);
         $entityManager->flush();
 

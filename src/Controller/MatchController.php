@@ -7,6 +7,7 @@ use App\Entity\Player;
 use App\Entity\TMatch;
 use App\Entity\Tournament;
 use App\Service\MatchService;
+use App\Utils\CourtViewType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -66,31 +67,43 @@ class MatchController extends AbstractController
     /**
      * @Route("/matches/get-list", name="matches-get-list-json")
      * @param Request $request
+     * @param MatchService $matchService
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function getMatchesList(Request $request)
+    public function getMatchesList(Request $request, MatchService $matchService)
     {
         $content = json_decode($request->getContent());
         if ($content->court == '') {
             return $this->json(array());
         }
+
         $court = $this->getDoctrine()->getManager()->find(Court::class, $content->court);
         $matches = $court->getTMatches();
-        $resultMatch = array();
+        $resultMatch = $matchService->getMatchesAsArray($matches);
 
-        /** @var Court $tournament */
-        foreach ($matches as $match) {
-            $matchArray = array();
-            $matchArray['id'] = $match->getId();
-            $matchArray['court'] = $match->getCourt()->getId();
-            $matchArray['tournament'] = $match->getTournament()->getId();
-            $matchArray['player1'] = $match->getPlayer1()->getId();
-            $matchArray['player2'] = $match->getPlayer2()->getId();
-            $matchArray['winner'] = $match->getWinner() == null ? '' : $match->getWinner()->getId();
-            $matchArray['score'] = $match->getScore();
-            $matchArray['position'] = $match->getPosition();
-            $resultMatch[] = $matchArray;
+        return $this->json($resultMatch);
+    }
+
+    /**
+     * @Route("/matches/get-list/tournament", name="matches-get-all-list-json")
+     * @param Request $request
+     * @param MatchService $matchService
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function getMatchesListByTournament(Request $request, MatchService $matchService)
+    {
+        $content = json_decode($request->getContent());
+        $repository = $this->getDoctrine()->getRepository(TMatch::class);
+
+        if ($content->tournament == '') {
+            return $this->json(array());
         }
+        $tournament = $this->getDoctrine()->getManager()->find(Tournament::class, $content->tournament);
+        $matches = $repository->findBy(
+            array('tournament' => $tournament->getId())
+        );
+
+        $resultMatch = $matchService->getMatchesAsArray($matches);
 
         return $this->json($resultMatch);
     }
@@ -125,5 +138,49 @@ class MatchController extends AbstractController
         $entityManager->flush();
 
         return $this->json(json_encode(array('id' => $tournament->getId())));
+    }
+
+    /**
+     * @Route("/matches/delete", name="match-delete")
+     */
+    public function deleteMatch(Request $request)
+    {
+        $content = json_decode($request->getContent());
+        $repository = $this->getDoctrine()->getRepository(TMatch::class);
+        $manager = $this->getDoctrine()->getManager();
+        $match = $repository->find($content->id);
+
+        $manager->remove($match);
+        $manager->flush();
+
+        return $this->json(json_encode(array('success' => true)));
+    }
+
+    /**
+     * @Route("/matches/position-update", name="match-position-up")
+     * @param Request $request
+     * @param MatchService $matchService
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function positionUpdate(Request $request, MatchService $matchService)
+    {
+        $content = json_decode($request->getContent());
+        $match = $this->getDoctrine()->getRepository(TMatch::class)->find($content->id);
+        $repository = $this->getDoctrine()->getRepository(TMatch::class);
+
+        if ($match != null) {
+            $content->position == 'up' ? $matchService->positionUp($match) : $matchService->positionDown($match);
+        }
+
+        if ($content->type == CourtViewType::ALL) {
+            $matches = $repository->findBy(
+                array('tournament' => $match->getTournament()->getId())
+            );
+        } else {
+            $matches = $match->getCourt()->getTMatches();
+        }
+        $matchesResult = $matchService->getMatchesAsArray($matches);
+
+        return $this->json($matchesResult);
     }
 }

@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <div
+            v-if="$root.auth"
+    >
         <h2 class="pl-3">Add match</h2>
         <div class="row mt-3">
             <form class="col-12">
@@ -187,7 +189,7 @@
                 if (!this.$v.invalid) {
                     this.$store.dispatch('saveMatch', match)
                         .then(() => {
-                            this.$router.push('/schedule')
+                            this.$router.push('/schedule?t=' + match.tournament)
                         })
                         .catch(() => {
                         });

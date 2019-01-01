@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div v-if="tournament !== 'empty'">
         <div
                 v-if="tournament !== 'empty'"
                 class="form-inline justify-content-between">
             <router-link
-                    v-if="tournament !== 'empty'"
+                    v-if="tournament !== 'empty' && $root.auth"
                     :to="'/match/add/' + tournament + '/' + getCourt" class="btn btn-primary mt-2" role="button"
                     aria-pressed="true"
                     :class="{'disabled': court === ''}"
@@ -18,11 +18,17 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col" class="text-center">Position</th>
+                    <th scope="col"
+                        :class="{'d-none d-md-table-cell': !$root.auth}"
+                        class="text-center">Position</th>
                     <th scope="col">First player</th>
                     <th scope="col">Second player</th>
-                    <th class="d-none d-md-table-cell" scope="col">Score</th>
-                    <th></th>
+                    <th
+                            :class="{'d-none d-md-table-cell': $root.auth}"
+                            scope="col">Score</th>
+                    <th
+                            v-if="$root.auth"
+                    ></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -32,37 +38,53 @@
                         :class="{'bg-light-rose': match.winner !== ''}"
 
                 >
-                    <th scope="row" class="text-center">
+                    <th scope="row" class="text-center" :class="{'d-none d-md-table-cell': !$root.auth}">
                         <span class="d-flex justify-content-around">
-                            <i class="fas fa-chevron-up btn-up mt-1"></i>
+                            <i
+                                    v-if="$root.auth"
+                                    class="fas fa-chevron-up btn-up mt-1"
+                                    @click="updatePosition(match.id, 'up')"
+                            ></i>
                             <span>{{ match.position }}</span>
-                            <i class="fas fa-chevron-down btn-down mt-1"></i>
+                            <i
+                                    v-if="$root.auth"
+                                    class="fas fa-chevron-down btn-down mt-1"
+                                    @click="updatePosition(match.id, 'down')"
+                            ></i>
                         </span>
                     </th>
                     <th
                             scope="row"
                             :class="{'text-dark': match.p1.id === match.winner}"
-                    >{{ match.p1.lastname }} {{ match.p1.firstname }}</th>
+                    >{{ match.p1.lastname }} {{ match.p1.firstname }}
+                    </th>
                     <th
                             scope="row"
                             :class="{'text-dark': match.p2.id === match.winner}"
-                    >{{ match.p2.lastname }} {{ match.p2.firstname }}</th>
-                    <th class="d-none d-md-table-cell"  scope="row">{{ match.score }}</th>
-                    <td class="text-right">
+                    >{{ match.p2.lastname }} {{ match.p2.firstname }}
+                    </th>
+                    <th
+                            :class="{'d-none d-md-table-cell': $root.auth}"
+                            scope="row">{{ match.score }}</th>
+                    <td
+                            v-if="$root.auth"
+                            class="text-right">
                         <div class="btn-group" role="group" aria-label="Basic example">
                             <router-link
                                     type="button"
                                     class="btn btn-warning"
                                     :to="{ name: 'match-edit', params: { id: match.id }, query: { tournamentId: match.tournament, courtId: match.court } }"
 
-                            >Edit</router-link>
+                            >Edit
+                            </router-link>
                             <button
-                                    @click="setObjectToDelete(tournament.id)"
+                                    @click="setObjectToDelete(match.id)"
                                     type="button"
                                     class="btn btn-danger"
                                     data-toggle="modal"
                                     data-target="#confirmModal"
-                            >Delete</button>
+                            >Delete
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -70,17 +92,19 @@
                 </tbody>
             </table>
         </div>
+        <app-confirm-modal modal-text="Are you sure you want delete this match?"></app-confirm-modal>
     </div>
 </template>
 
 <script>
-    import {eventEmitter} from "../../custom";
+    import {CourtViewType,eventEmitter} from "../../custom";
 
     export default {
-        props: ['court', 'tournament'],
+        props: ['court', 'tournament', 'courtViewType'],
         data() {
             return {
-                search: ''
+                search: '',
+                objectId: null
             }
         },
         computed: {
@@ -104,10 +128,39 @@
                 return this.$store.getters.players;
             }
         },
+        methods: {
+            setObjectToDelete(id) {
+                this.objectId = id;
+            },
+            updatePosition(id, type) {
+                this.$store.dispatch('updatePosition', {
+                    id: id,
+                    type: this.courtViewType,
+                    position: type
+                })
+            }
+        },
+        watch: {
+            courtViewType (val) {
+                if (val === CourtViewType.byCourt) {
+                    this.$store.dispatch('fetchMatches', {court: this.court})
+                } else {
+                    this.$store.dispatch('fetchMatchesByTournament', {tournament: this.tournament})
+                }
+            }
+        },
         created() {
             this.$store.dispatch('fetchPlayers');
             eventEmitter.$on('selectCourt', (data) => {
                 this.$store.dispatch('fetchMatches', {court: data.court})
+            });
+
+            eventEmitter.$on('confirmModal', () => {
+                this.$store.dispatch('removeMatch', this.objectId)
+                    .then(() => {
+                        this.$router.push('/schedule')
+                    })
+                    .catch(() => {});
             });
         }
     }
