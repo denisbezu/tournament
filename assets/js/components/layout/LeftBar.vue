@@ -9,21 +9,25 @@
             <img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="/img/tennis-ball.jpg" alt="">
         </span>
         </router-link>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" @click="isMobileShown = true" >
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div
+                class="collapse navbar-collapse"
+                :class="{'show' : isMobileShown}"
+                id="navbarSupportedContent">
             <ul class="navbar-nav">
-                <li class="nav-item">
+                <li class="nav-item" @click="hideMobileMenu">
                     <router-link class="nav-link" :to="'/tournaments/list'">Tournaments</router-link>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" @click="hideMobileMenu">
                     <router-link class="nav-link" :to="'/schedule'">Schedule</router-link>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" @click="hideMobileMenu">
                     <router-link class="nav-link" :to="'/players/list'">Players</router-link>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" @click="hideMobileMenu">
                     <router-link class="nav-link" :to="'/info'">Info</router-link>
                 </li>
             </ul>
@@ -33,9 +37,17 @@
 
 <script>
     export default {
+        data() {
+            return {
+                isMobileShown: false
+            }
+        },
         methods: {
             goBack() {
                 this.$router.go(-1);
+            },
+            hideMobileMenu() {
+                this.isMobileShown = false;
             }
         }
     }
